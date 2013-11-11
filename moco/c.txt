@@ -1,0 +1,15 @@
+﻿[
+  {
+  	"request": {
+    	"uri" : "/info"
+	},
+    "response" :
+      {
+        "text" : "jsonpHandler({'content':'产品详细信息。。。'})",
+        "headers" :
+        {
+          "Content-Type" : "application/javascript; charset=gbk"
+        }
+      }
+  }
+]
