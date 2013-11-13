@@ -1,0 +1,11 @@
+*** Settings ***
+Library           OperatingSystem
+
+*** Keywords ***
+start moco
+    [Arguments]    ${moco_path}    ${start_port}    ${shutdown_port}    ${config_file}
+    Start Process    ${moco_path}\\start_moco.bat ${moco_path} ${start_port} ${shutdown_port} ${config_file}
+
+stop moco
+    [Arguments]    ${moco_path}    ${shutdown_port}
+    run    ${moco_path}\\stop_moco.bat ${moco_path} ${shutdown_port}

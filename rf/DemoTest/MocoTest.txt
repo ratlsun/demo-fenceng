@@ -1,0 +1,24 @@
+*** Settings ***
+Suite Setup       start moco    ${moco_path}    ${start_port}    ${shutdown_port}    ${config_file}
+Suite Teardown    stop moco    ${moco_path}    ${shutdown_port}
+Resource          moco.txt
+Library           Selenium2Library
+
+*** Variables ***
+${moco_path}      ${CURDIR}\\..\\..\\moco
+${start_port}     9090
+${shutdown_port}    9091
+${config_file}    c.txt
+
+*** Test Cases ***
+MocoDemo
+    open browser    http://127.0.0.1:8000/    ie
+    Maximize Browser Window
+    Input Text    ProductName    iphone5s
+    Input Text    Quantity    55
+    Click Button    submitBtn
+    Wait Until Element Is Visible    infoBtn    10s
+    Wait Until Keyword Succeeds    10s    1s    press key    infoBtn    \\13
+    Wait Until Page Contains    产品详细信息    10s
+    Element Should Contain    Info    产品详细信息
+    [Teardown]    Close All Browsers
