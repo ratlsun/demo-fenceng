@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from flask import Flask, jsonify, render_template, request
+from demodao import Dao
 import time
+
 app = Flask(__name__)
- 
+db = Dao()
+
 @app.before_request
 def before_request():
     if request.path != '/':
@@ -32,12 +35,21 @@ def iframe():
  
 @app.route('/echo/', methods=['GET'])
 def echo():
-    ret_data = {"ProductName": request.args.get('ProductName'),
-                "Quantity": request.args.get('Quantity')
-
-                }
+    pname = request.args.get('ProductName')
+    pquan = request.args.get('Quantity')
+    db.addItemToOrder(pname, pquan)
     time.sleep(3)
-    return jsonify(ret_data)
- 
+    ret_data = db.getItemsFromOrder()
+    #print ret_data
+    return jsonify(ProductName=pname, Quantity=pquan, AllProducts=ret_data)
+
+@app.route('/remove/', methods=['GET'])
+def remove():
+    pid = request.args.get('Pid')
+    db.delItemFromOrder(pid)
+    ret_data = db.getItemsFromOrder()
+    #print ret_data
+    return jsonify(AllProducts=ret_data)
+
 if __name__ == '__main__':
-    app.run(port=8000, debug=True)
+    app.run(port=8000, debug=True, threaded=True)
