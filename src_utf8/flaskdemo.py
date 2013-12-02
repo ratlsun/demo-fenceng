@@ -3,6 +3,12 @@
 from flask import Flask, jsonify, render_template, request
 from demodao import Dao
 import time
+import atexit
+
+def cleanup():
+    db.removeOrder()
+
+atexit.register(cleanup)
 
 app = Flask(__name__)
 db = Dao()

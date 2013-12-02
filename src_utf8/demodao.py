@@ -12,7 +12,7 @@ def _dict_factory(cursor, row):
 class Dao(object):
 
     def __init__(self):
-        self.con = sqlite.connect(":memory:", check_same_thread=False)
+        self.con = sqlite.connect("demo.db", check_same_thread=False)
         self.con.row_factory = _dict_factory
         self.con.execute("create table if not exists order_item(id integer primary key, name text, quantity integer)")
 
@@ -33,4 +33,7 @@ class Dao(object):
         with self.con:
             self.con.execute("delete from order_item where id = ?", (pid,))
  
-
+    def removeOrder(self):
+        #con = sqlite.connect("demo.db")
+        with self.con:
+            self.con.execute("drop table if exists order_item")

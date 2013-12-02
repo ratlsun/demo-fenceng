@@ -1,0 +1,19 @@
+*** Settings ***
+Library           Selenium2Library
+Library           DatabaseLibrary
+
+*** Variables ***
+${db_path}        D:\\workspace.github\\demo-fenceng\\src_utf8\\demo.db
+
+*** Test Cases ***
+DbDemo
+    [Setup]    connect_to_database_using_custom_params    sqlite3    ${db_path}
+    open browser    http://127.0.0.1:8000/    ie
+    Maximize Browser Window
+    Input Text    ProductName    iphone5s
+    Input Text    Quantity    55
+    Click Button    submitBtn
+    Wait Until Element Is Visible    infoBtn    10s
+    ${queryResults}    query    select id, name, quantity from order_item order by id
+    log    ${queryResults}
+    [Teardown]    Close All Browsers
