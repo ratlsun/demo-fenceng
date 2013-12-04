@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh_cn">
     <head>
-        <title>è´­ç‰©è½¦</title>
+        <title>¹ºÎï³µ</title>
         <meta http-equiv="X-UA-Compatible" content="IE=8">
         <meta http-equiv="content-type" content="text/html; charset=utf-8">
 		<script type=text/javascript src="/jquery/"></script>
@@ -17,7 +17,7 @@
 	            success: function(data) {
 	                var htmlText = "";
 	                for (pi in data.AllProducts) {
-	                    htmlText += "<option value ='"+data.AllProducts[pi].Id+"' >äº§å“:"+data.AllProducts[pi].ProductName+",æ•°é‡:"+data.AllProducts[pi].Quantity+"</option>";
+	                    htmlText += "<option value ='"+data.AllProducts[pi].Id+"' >²úÆ·:"+data.AllProducts[pi].ProductName+",ÊıÁ¿:"+data.AllProducts[pi].Quantity+"</option>";
 	                }
 	                $("#buy").html(htmlText);
 	            },
@@ -29,11 +29,11 @@
         </script>
 	</head>
     <body>
-	è´­ç‰©è½¦<p>
+	¹ºÎï³µ<p>
 	<table id='cart' border='1'>
 	<select id="buy" name="buy">
 	</select>  
-	<button type='button' id='delete' name='delete' onclick='del();'>åˆ é™¤</button>
+	<button type='button' id='delete' name='delete' onclick='del();'>É¾³ı</button>
 	</table>
     </body>
 </html>
