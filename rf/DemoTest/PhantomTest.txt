@@ -1,0 +1,14 @@
+*** Settings ***
+Library           Selenium2Library
+
+*** Test Cases ***
+PhantomDemo
+    open browser    http://127.0.0.1:8000/    phantomjs
+    Capture Page Screenshot
+    Maximize Browser Window
+    Input Text    ProductName    iphone5s
+    Input Text    Quantity    55
+    Click Button    submitBtn
+    Wait Until Element Is Visible    infoBtn    10s
+    Capture Page Screenshot
+    [Teardown]    Close All Browsers
