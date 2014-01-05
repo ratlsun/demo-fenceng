@@ -27,6 +27,7 @@
                 $('#Qn').html(data.Quantity);
                 $('#result').show();
                 $("#infoBtn").removeAttr('disabled');
+                $("#infoBtn").show();
                 var htmlText = "";
                 for (pi in data.AllProducts) {
                     htmlText += "<option value ='"+data.AllProducts[pi].Id+"' >产品:"+data.AllProducts[pi].ProductName+",数量:"+data.AllProducts[pi].Quantity+"</option>";
@@ -54,6 +55,7 @@
             }
         });
     });	
+    $("#infoBtn").hide();
   });
   
 </script>
@@ -77,7 +79,7 @@
 <table id='result' style='display:none' width='300' border='1'>
 <tr width='300'>
 <td width='300' nowrap >
-<div id='msg'>你购买了<div id='Pr'></div>，一共<div id='Qn'></div>件。<div id='Info'></div>
+<div id='msg'>你购买了<span id='Pr'></span>，一共<span id='Qn'></span>件。<div id='Info'></div>
 </div>
 </td>
 </tr>
