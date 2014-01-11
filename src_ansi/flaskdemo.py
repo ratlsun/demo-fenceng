@@ -38,7 +38,13 @@ def deliver():
 @app.route('/iframe/')
 def iframe():
     return render_template('iframe.html')
- 
+
+@app.route('/init/', methods=['GET'])
+def init():
+    ret_data = db.getItemsFromOrder()
+    #print ret_data
+    return jsonify(AllProducts=ret_data)
+
 @app.route('/echo/', methods=['GET'])
 def echo():
     pname = request.args.get('ProductName')

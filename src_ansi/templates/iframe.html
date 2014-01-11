@@ -8,16 +8,16 @@
 		<script type=text/javascript>
 		var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 
-		function del() {
+		function del(pid) {
 	        $.ajax({
 	            type: "GET",
 	            url: $SCRIPT_ROOT + "/remove/",
 	            contentType: "application/xml; charset=utf-8",
-	            data: { Pid: $("select#buy").val()},
+	            data: { Pid: pid},
 	            success: function(data) {
 	                var htmlText = "";
 	                for (pi in data.AllProducts) {
-	                    htmlText += "<option value ='"+data.AllProducts[pi].Id+"' >产品:"+data.AllProducts[pi].ProductName+",数量:"+data.AllProducts[pi].Quantity+"</option>";
+	                    htmlText += "<tr><td>"+data.AllProducts[pi].Id+"</td><td>"+data.AllProducts[pi].ProductName+"</td><td>"+data.AllProducts[pi].Quantity+"</td><td><button type='button' id='delete' name='delete' onclick='del("+data.AllProducts[pi].Id+");'>删除</button></td>";
 	                }
 	                $("#buy").html(htmlText);
 	            },
@@ -25,20 +25,40 @@
 	                alert(errorThrown);
 	            }
 	        });
-		}
+		};
+		$(function() {
+		    $.ajax({
+                type: "GET",
+                url: $SCRIPT_ROOT + "/init/",
+                contentType: "application/xml; charset=utf-8",
+                success: function(data) {
+                    var htmlText = "";
+                    for (pi in data.AllProducts) {
+                        htmlText += "<tr><td>"+data.AllProducts[pi].Id+"</td><td>"+data.AllProducts[pi].ProductName+"</td><td>"+data.AllProducts[pi].Quantity+"</td><td><button type='button' id='delete' name='delete' onclick='del("+data.AllProducts[pi].Id+");'>删除</button></td>";
+                    }
+                    $("#buy").html(htmlText);
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert(errorThrown);
+                }
+            });
+		});
         </script>
 	</head>
     <body>
 	购物车<p>
 	<table id='cart' border='1'>
-	<tr>
-	<td>
-		<select id="buy" name="buy"></select>  
-	</td>
-	<td>
-		<button type='button' id='delete' name='delete' onclick='del();'>删除</button>
-	</td>
-	</tr>
+		<thead>
+          <tr>
+            <th>#</th>
+            <th>产品名称</th>
+            <th>购买数量</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="buy">
+
+        </tbody>
 	</table>
     </body>
 </html>

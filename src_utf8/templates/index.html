@@ -30,7 +30,7 @@
                 $("#infoBtn").show();
                 var htmlText = "";
                 for (pi in data.AllProducts) {
-                    htmlText += "<option value ='"+data.AllProducts[pi].Id+"' >产品:"+data.AllProducts[pi].ProductName+",数量:"+data.AllProducts[pi].Quantity+"</option>";
+                    htmlText += "<tr><td>"+data.AllProducts[pi].Id+"</td><td>"+data.AllProducts[pi].ProductName+"</td><td>"+data.AllProducts[pi].Quantity+"</td><td><button type='button' id='delete' name='delete' onclick='del("+data.AllProducts[pi].Id+");'>删除</button></td>";
                 }
                 $(window.frames["fra"].document).find("#buy").html(htmlText);
             },
@@ -85,7 +85,7 @@
 </tr>
 </table>
 <p>
-<iframe id='fra' src="/iframe/" width='400' height='200'>
+<iframe id='fra' src="/iframe/" width='400' height='300'>
 </iframe>
 <p>
 <button type='button' id='pay' name='pay'>付款</button>    
