@@ -19,14 +19,32 @@ class Dao(object):
     def addItemToOrder(self, name, quantity):
         #con = sqlite.connect("demo.db")
         with self.con:
-        	self.con.execute("insert into order_item(name, quantity) values (?, ?)", (name, quantity))
+            self.con.execute("insert into order_item(name, quantity) values (?, ?)", (name, quantity))
+            cursor = self.con.cursor()
+            cursor.execute("select id, name, quantity from order_item order by id desc limit 1")
+            return cursor.fetchone()
+
+    def updateItemToOrder(self, pid, name, quantity):
+        #con = sqlite.connect("demo.db")
+        with self.con:
+            self.con.execute("update order_item set name = ?, quantity = ?", (name, quantity))
+            cursor = self.con.cursor()
+            cursor.execute("select id, name, quantity from order_item where id = ?", (pid,))
+            return cursor.fetchone()
 
     def getItemsFromOrder(self):
         #con = sqlite.connect("demo.db")
         with self.con:
-        	cursor = self.con.cursor()
-        	cursor.execute("select id, name, quantity from order_item order by id")
-        	return cursor.fetchall()        	
+            cursor = self.con.cursor()
+            cursor.execute("select id, name, quantity from order_item order by id")
+            return cursor.fetchall()
+
+    def getItemByIdFromOrder(self, pid):
+        #con = sqlite.connect("demo.db")
+        with self.con:
+            cursor = self.con.cursor()
+            cursor.execute("select id, name, quantity from order_item where id = ?", (pid,))
+            return cursor.fetchone() 
 
     def delItemFromOrder(self, pid):
         #con = sqlite.connect("demo.db")
