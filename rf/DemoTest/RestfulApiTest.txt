@@ -1,0 +1,54 @@
+*** Settings ***
+Library           RequestsLibrary
+
+*** Test Cases ***
+RestfulProductApiTest
+    Create Session    httpserver    http://localhost:8000
+    获取产品列表    httpserver
+    ${pid}    新建一个产品    httpserver    iphone5s    55
+    更新产品信息    httpserver    ${pid}    iphone5c    66
+    删除一个产品    httpserver    ${pid}
+    获取一个已经被删除的产品    httpserver    ${pid}
+
+*** Keywords ***
+获取产品列表
+    [Arguments]    ${sess_id}
+    [Documentation]    调用 /api/products GET 接口获取产品列表，记录所有产品的json list
+    ${resp}=    get    ${sess_id}    /api/products
+    Should Be Equal As Strings    ${resp.status_code}    200
+    ${jsondata}=    To JSON    ${resp.content}
+    log    Products list before create: ${jsondata['AllProducts']}
+
+新建一个产品
+    [Arguments]    ${sess_id}    ${产品名称}    ${产品数量}
+    [Documentation]    调用 /api/products POST 新建一个产品，记录返回的被创建产品json，返回产品id
+    ${resp}=    post    ${sess_id}     /api/products    {"ProductName": "${产品名称}","Quantity": ${产品数量} \ \ }
+    Should Be Equal As Strings    ${resp.status_code}    201
+    ${jsondata}=    To JSON    ${resp.content}
+    log    Created product: ${jsondata['Product']}
+    ${pid}    set variable    ${jsondata['Product']['Id']}
+    [Return]    ${pid}
+
+更新产品信息
+    [Arguments]    ${sess_id}    ${产品id}    ${产品名称}    ${产品数量}
+    [Documentation]    调用 /api/products/<pid> \ PUT 更新一个产品，记录返回的更新后的产品json
+    ${resp}=    put    ${sess_id}    /api/products/${产品id}    {"ProductName": "${产品名称}","Quantity": ${产品数量} \ \ }
+    Should Be Equal As Strings    ${resp.status_code}    200
+    ${jsondata}=    To JSON    ${resp.content}
+    log    Updated No.${pid} product quantity: ${jsondata['Product']}
+
+删除一个产品
+    [Arguments]    ${sess_id}    ${产品id}
+    [Documentation]    调用 /api/products/<pid> \ DELETE 删除一个产品，记录返回的是否成功删除的结果
+    ${resp}=    delete    ${sess_id}    /api/products/${产品id}
+    Should Be Equal As Strings    ${resp.status_code}    200
+    ${jsondata}=    To JSON    ${resp.content}
+    log    Deleted No.${pid} \ product: ${jsondata['result']}
+
+获取一个已经被删除的产品
+    [Arguments]    ${sess_id}    ${产品id}
+    [Documentation]    调用 /api/products/<pid> \ GET 或取一个产品，记录返回结果，应该返回404错误
+    ${resp}=    get    ${sess_id}    /api/products/${产品id}
+    Should Be Equal As Strings    ${resp.status_code}    404
+    ${jsondata}=    To JSON    ${resp.content}
+    log    Get No.${pid} product: ${jsondata['result']}
