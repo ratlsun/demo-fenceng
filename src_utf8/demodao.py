@@ -27,7 +27,7 @@ class Dao(object):
     def updateItemToOrder(self, pid, name, quantity):
         #con = sqlite.connect("demo.db")
         with self.con:
-            self.con.execute("update order_item set name = ?, quantity = ?", (name, quantity))
+            self.con.execute("update order_item set name = ?, quantity = ? where id = ?", (name, quantity, pid))
             cursor = self.con.cursor()
             cursor.execute("select id, name, quantity from order_item where id = ?", (pid,))
             return cursor.fetchone()

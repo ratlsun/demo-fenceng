@@ -1,11 +1,13 @@
 *** Settings ***
 Library           RequestsLibrary
+Library           OperatingSystem
 
 *** Test Cases ***
 RestfulProductApiTest
     Create Session    httpserver    http://localhost:8000
     获取产品列表    httpserver
-    ${pid}    新建一个产品    httpserver    iphone5s    55
+    Comment    ${pid}    新建一个产品    httpserver    iphone5s    55
+    ${pid}    使用文件里的数据新建一个产品    httpserver    ${CURDIR}\\product.data
     更新产品信息    httpserver    ${pid}    iphone5c    66
     删除一个产品    httpserver    ${pid}
     获取一个已经被删除的产品    httpserver    ${pid}
@@ -22,7 +24,7 @@ RestfulProductApiTest
 新建一个产品
     [Arguments]    ${sess_id}    ${产品名称}    ${产品数量}
     [Documentation]    调用 /api/products POST 新建一个产品，记录返回的被创建产品json，返回产品id
-    ${resp}=    post    ${sess_id}     /api/products    {"ProductName": "${产品名称}","Quantity": ${产品数量} \ \ }
+    ${resp}=    post    ${sess_id}    /api/products    {"ProductName": "${产品名称}","Quantity": ${产品数量} \ \ }
     Should Be Equal As Strings    ${resp.status_code}    201
     ${jsondata}=    To JSON    ${resp.content}
     log    Created product: ${jsondata['Product']}
@@ -52,3 +54,14 @@ RestfulProductApiTest
     Should Be Equal As Strings    ${resp.status_code}    404
     ${jsondata}=    To JSON    ${resp.content}
     log    Get No.${pid} product: ${jsondata['result']}
+
+使用文件里的数据新建一个产品
+    [Arguments]    ${sess_id}    ${文件路径}
+    [Documentation]    用指定文件路径里的json数据调用 /api/products POST 新建一个产品，记录返回的被创建产品json，返回产品id
+    ${product_content}=    get file    ${文件路径}
+    ${resp}=    post    ${sess_id}    /api/products    ${product_content}
+    Should Be Equal As Strings    ${resp.status_code}    201
+    ${jsondata}=    To JSON    ${resp.content}
+    log    Created product: ${jsondata['Product']}
+    ${pid}    set variable    ${jsondata['Product']['Id']}
+    [Return]    ${pid}

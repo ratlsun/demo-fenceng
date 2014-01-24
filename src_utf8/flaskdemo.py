@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, Response
 from demodao import Dao
 import time
 import atexit
@@ -68,41 +68,49 @@ def remove():
 @app.route('/api/products', methods=['GET'])
 def listProducts():
     ret_data = db.getItemsFromOrder()
-    return jsonify(AllProducts=ret_data)
+    #return jsonify(AllProducts=ret_data)
+    return Response(json.dumps({'AllProducts':ret_data}),  mimetype='text/html')
 
 @app.route('/api/products/<int:pid>', methods=['GET'])
 def getProduct(pid):
     ret_data = db.getItemByIdFromOrder(pid)
     if ret_data == None:
-        return jsonify({ 'result': 'NOT FOUND'}), 404
-    return jsonify(Product=ret_data)
+        #return jsonify({ 'result': 'NOT FOUND'}), 404
+        return Response(json.dumps({ 'result': 'NOT FOUND'}), 404, mimetype='text/html')
+    #return jsonify(Product=ret_data)
+    return Response(json.dumps({'Product':ret_data}),  mimetype='text/html')
 
 @app.route('/api/products', methods=['POST'])
 def createProduct():
     if not request.data:
-        return jsonify({ 'result': 'FAIL', 'reason': 'Empty post data.' }), 400
+        #return jsonify({ 'result': 'FAIL', 'reason': 'Empty post data.' }), 400
+        return Response(json.dumps({ 'result': 'FAIL', 'reason': 'Empty post data.' }), 400, mimetype='text/html')
     print request.data
     pdata = json.loads(request.data)
     pname = pdata.get('ProductName', '')
     pquan = pdata.get('Quantity', 0)
     ret_data = db.addItemToOrder(pname, pquan)
-    return jsonify(Product=ret_data), 201
+    #return jsonify(Product=ret_data), 201
+    return Response(json.dumps({'Product':ret_data}), 201,  mimetype='text/html')
 
 @app.route('/api/products/<int:pid>', methods=['PUT'])
 def updateProduct(pid):
     if not request.data:
-        return jsonify({ 'result': 'FAIL', 'reason': 'Empty post data.' }), 400
+        #return jsonify({ 'result': 'FAIL', 'reason': 'Empty post data.' }), 400
+        return Response(json.dumps({ 'result': 'FAIL', 'reason': 'Empty post data.' }), 400, mimetype='text/html')
     print request.data
     pdata = json.loads(request.data)
     pname = pdata.get('ProductName', '')
     pquan = pdata.get('Quantity', 0)
     ret_data = db.updateItemToOrder(pid, pname, pquan)
-    return jsonify(Product=ret_data)
+    #return jsonify(Product=ret_data)
+    return Response(json.dumps({'Product':ret_data}),  mimetype='text/html')
 
 @app.route('/api/products/<int:pid>', methods=['DELETE'])
 def deleteProduct(pid):
     db.delItemFromOrder(pid)
-    return jsonify({ 'result': 'SUCCESS' })
+    #return jsonify({ 'result': 'SUCCESS' })
+    return Response(json.dumps({ 'result': 'SUCCESS' }),  mimetype='text/html')
 
 if __name__ == '__main__':
     app.run(port=8000, debug=True, threaded=True)
