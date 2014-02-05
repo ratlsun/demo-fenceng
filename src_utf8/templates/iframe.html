@@ -8,31 +8,14 @@
 		<script type=text/javascript>
 		var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 
-		function del(pid) {
-	        $.ajax({
-	            type: "GET",
-	            url: $SCRIPT_ROOT + "/remove/",
-	            contentType: "application/xml; charset=utf-8",
-	            data: { Pid: pid},
-	            success: function(data) {
-	                var htmlText = "";
-	                for (pi in data.AllProducts) {
-	                    htmlText += "<tr><td>"+data.AllProducts[pi].Id+"</td><td>"+data.AllProducts[pi].ProductName+"</td><td>"+data.AllProducts[pi].Quantity+"</td><td><button type='button' id='delete' name='delete' onclick='del("+data.AllProducts[pi].Id+");'>删除</button></td>";
-	                }
-	                $("#buy").html(htmlText);
-	            },
-	            error: function(jqXHR, textStatus, errorThrown) {
-	                alert(errorThrown);
-	            }
-	        });
-		};
-		$(function() {
-		    $.ajax({
+        function refresh() {
+            $.ajax({
                 type: "GET",
-                url: $SCRIPT_ROOT + "/init/",
+                url: $SCRIPT_ROOT + "/api/products",
                 contentType: "application/xml; charset=utf-8",
-                success: function(data) {
+                success: function(resp) {
                     var htmlText = "";
+                    var data = JSON.parse(resp);
                     for (pi in data.AllProducts) {
                         htmlText += "<tr><td>"+data.AllProducts[pi].Id+"</td><td>"+data.AllProducts[pi].ProductName+"</td><td>"+data.AllProducts[pi].Quantity+"</td><td><button type='button' id='delete' name='delete' onclick='del("+data.AllProducts[pi].Id+");'>删除</button></td>";
                     }
@@ -42,6 +25,22 @@
                     alert(errorThrown);
                 }
             });
+        };
+		function del(pid) {
+	        $.ajax({
+	            type: "DELETE",
+	            url: $SCRIPT_ROOT + "/api/products/"+pid,
+	            contentType: "application/xml; charset=utf-8",
+	            success: function(data) {
+	                refresh();
+	            },
+	            error: function(jqXHR, textStatus, errorThrown) {
+	                alert(errorThrown);
+	            }
+	        });
+		};
+		$(function() {
+		    refresh();
 		});
         </script>
 	</head>

@@ -16,23 +16,20 @@
 	});
 
     $("#submitBtn").click(function() {
+        var pn = $('input[name="ProductName"]').val();
+        var pq = $('input[name="Quantity"]').val();
         $.ajax({
-            type: "GET",
-            url: $SCRIPT_ROOT + "/echo/",
+            type: "POST",
+            url: $SCRIPT_ROOT + "/api/products",
             contentType: "application/xml; charset=utf-8",
-            data: { ProductName: $('input[name="ProductName"]').val(), 
-					Quantity: $('input[name="Quantity"]').val()},
+            data: '{ "ProductName":"'+pn+'", "Quantity":'+pq+'}',
             success: function(data) {
-                $('#Pr').html(data.ProductName);
-                $('#Qn').html(data.Quantity);
+                $('#Pr').html(pn);
+                $('#Qn').html(pq);
                 $('#result').show();
                 $("#infoBtn").removeAttr('disabled');
                 $("#infoBtn").show();
-                var htmlText = "";
-                for (pi in data.AllProducts) {
-                    htmlText += "<tr><td>"+data.AllProducts[pi].Id+"</td><td>"+data.AllProducts[pi].ProductName+"</td><td>"+data.AllProducts[pi].Quantity+"</td><td><button type='button' id='delete' name='delete' onclick='del("+data.AllProducts[pi].Id+");'>删除</button></td>";
-                }
-                $(window.frames["fra"].document).find("#buy").html(htmlText);
+                window.frames['fra'].refresh();
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 alert(errorThrown);

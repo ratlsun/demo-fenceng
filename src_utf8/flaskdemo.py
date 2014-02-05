@@ -40,31 +40,6 @@ def deliver():
 def iframe():
     return render_template('iframe.html')
 
-@app.route('/init/', methods=['GET'])
-def init():
-    ret_data = db.getItemsFromOrder()
-    #print ret_data
-    return jsonify(AllProducts=ret_data)
-
-@app.route('/echo/', methods=['GET'])
-def echo():
-    pname = request.args.get('ProductName')
-    pquan = request.args.get('Quantity')
-    db.addItemToOrder(pname, pquan)
-    time.sleep(3)
-    ret_data = db.getItemsFromOrder()
-    #print ret_data
-    return jsonify(ProductName=pname, Quantity=pquan, AllProducts=ret_data)
-
-@app.route('/remove/', methods=['GET'])
-def remove():
-    pid = request.args.get('Pid')
-    db.delItemFromOrder(pid)
-    ret_data = db.getItemsFromOrder()
-    #print ret_data
-    return jsonify(AllProducts=ret_data)
-
-
 @app.route('/api/products', methods=['GET'])
 def listProducts():
     ret_data = db.getItemsFromOrder()
@@ -90,6 +65,10 @@ def createProduct():
     pname = pdata.get('ProductName', '')
     pquan = pdata.get('Quantity', 0)
     ret_data = db.addItemToOrder(pname, pquan)
+    
+    #for rf demo
+    time.sleep(3) 
+
     #return jsonify(Product=ret_data), 201
     return Response(json.dumps({'Product':ret_data}), 201,  mimetype='text/html')
 
