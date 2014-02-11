@@ -1,6 +1,7 @@
 *** Settings ***
 Library           RequestsLibrary
 Library           OperatingSystem
+Library           Collections
 
 *** Test Cases ***
 RestfulProductApiTest
@@ -11,6 +12,21 @@ RestfulProductApiTest
     更新产品信息    httpserver    ${pid}    iphone5c    66
     删除一个产品    httpserver    ${pid}
     获取一个已经被删除的产品    httpserver    ${pid}
+
+CookieFetchAndSendTest
+    ########    Visit admin page before login(without cookies)    ########
+    Create Session    session1    http://localhost:8000
+    ${resp}=    get    session1    /admin
+    log    ${resp.content}
+    Should Be Equal As Strings    ${resp.status_code}    403
+    ################    Login(fetch cookies)    ########################
+    ${resp}=    get    session1    /login
+    log    ${resp.cookies['username']} login successful
+    ########    Visit admin page after login(with cookies)    ########
+    Create Session    session2    http://localhost:8000    cookies=${resp.cookies}
+    ${resp}=    get    session2    /admin
+    log    ${resp.content}
+    Should Be Equal As Strings    ${resp.status_code}    200
 
 *** Keywords ***
 获取产品列表

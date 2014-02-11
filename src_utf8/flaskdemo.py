@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, jsonify, render_template, request, Response
+from flask import Flask, jsonify, render_template, request, Response, make_response
 from demodao import Dao
 import time
 import atexit
@@ -40,6 +40,21 @@ def deliver():
 def iframe():
     return render_template('iframe.html')
 
+@app.route('/login')
+def login():
+    response = make_response(render_template('index.html'))
+    response.set_cookie('username', 'Hale')
+    return response
+
+@app.route('/admin')
+def admin():
+    username = request.cookies.get('username')  
+    if username == 'Hale':
+        return Response(json.dumps({ 'result': 'SUCCESS'}), mimetype='text/html')
+    else:
+        return Response(json.dumps({ 'result': 'FOBIDDEN', 'reason': 'Only Hale can access. Please visit login first.'}), 
+            403, mimetype='text/html')
+
 @app.route('/api/products', methods=['GET'])
 def listProducts():
     ret_data = db.getItemsFromOrder()
@@ -65,7 +80,7 @@ def createProduct():
     pname = pdata.get('ProductName', '')
     pquan = pdata.get('Quantity', 0)
     ret_data = db.addItemToOrder(pname, pquan)
-    
+
     #for rf demo
     time.sleep(3) 
 

@@ -13,7 +13,11 @@ http.createServer( function(req, res){
 
 	var urlObject = url.parse(req.url);
 	var hostArray = req.headers.host.split(":");
-      
+    
+    function logFilter() {
+        return (urlObject.pathname.indexOf('/api/')>-1);
+    }
+
 	var option = {
 		'host': hostArray[0],
         'port': Number(hostArray[1]||'80'),
@@ -22,18 +26,18 @@ http.createServer( function(req, res){
 		'headers': req.headers
 	};
     //console.log('===================option: ' + util.inspect(option));
-    if (urlObject.pathname.indexOf('/api/')>-1){
+    if (logFilter()){
     	fs.appendFile(logFileName, '\nRequest:\t'+option.method+'\t'+option.path+'\t');
 	}
 
     var clientReq = http.request(option, function(clientRes){
     	console.log('===================response: ', clientRes.statusCode);
 		res.writeHeader(clientRes.statusCode, clientRes.headers);
-		if (urlObject.pathname.indexOf('/api/')>-1){
+		if (logFilter()){
     		fs.appendFile(logFileName, '\nResponse:\t'+option.method+'\t'+option.path+'\t');
 		}
         clientRes.on('data', function(chunk){  
-        	if (urlObject.pathname.indexOf('/api/')>-1){
+        	if (logFilter()){
     			fs.appendFile(logFileName, chunk);
 			}
         	res.write(chunk); 
@@ -48,7 +52,7 @@ http.createServer( function(req, res){
     });
 
     req.on('data', function(chunk){ 
-    	if (urlObject.pathname.indexOf('/api/')>-1){
+    	if (logFilter()){
     		fs.appendFile(logFileName, chunk);
 		}
     	clientReq.write(chunk); 
