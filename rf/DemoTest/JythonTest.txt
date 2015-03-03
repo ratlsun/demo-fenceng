@@ -1,0 +1,11 @@
+*** Settings ***
+Library           ../python_lib/DBLibrary.py
+Library           ../python_lib/HelpLibrary.py
+
+*** Test Cases ***
+StaticMethodTest
+    ${value} =    get_result_from_db    10    SELECT * FROM NTHPAZON %s %s    a    b
+    log    ${value}
+
+DynamicPropertiesTest
+    setting_and_run    propertyB=valueB

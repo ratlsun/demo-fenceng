@@ -1,0 +1,10 @@
+*** Settings ***
+Library           FtpLibrary
+
+*** Test Cases ***
+PutDemo
+    ftp connect    172.30.12.49    flight    act123flt
+    cwd    /opt/FTP/ASM/ASM_SOURCE
+    ${time}    get time
+    Upload File    d:/CNL_RCT_18.txt    CNL_RCT_${time}.txt
+    ftp close

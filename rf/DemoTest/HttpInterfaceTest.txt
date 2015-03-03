@@ -5,10 +5,11 @@ Library           Collections
 
 *** Test Cases ***
 RestfulProductApiTest
+    Comment    ${proxies}    create dictionary    http    http://localhost:3333
     Create Session    httpserver    http://localhost:8000
     获取产品列表    httpserver
-    Comment    ${pid}    新建一个产品    httpserver    iphone5s    55
-    ${pid}    使用文件里的数据新建一个产品    httpserver    ${CURDIR}\\product.data
+    ${pid}    新建一个产品    httpserver    iphone5s    55
+    Comment    ${pid}    使用文件里的数据新建一个产品    httpserver    ${CURDIR}\\product.data
     更新产品信息    httpserver    ${pid}    iphone5c    66
     删除一个产品    httpserver    ${pid}
     获取一个已经被删除的产品    httpserver    ${pid}
@@ -27,6 +28,16 @@ CookieFetchAndSendTest
     ${resp}=    get    session2    /admin
     log    ${resp.content}
     Should Be Equal As Strings    ${resp.status_code}    200
+
+Post With Unicode Data
+    [Tags]    post
+    Create Session    httpbin    http://httpbin.org
+    ${data}=    Create Dictionary    name    度假村
+    ${headers}=    Create Dictionary    Content-Type    application/x-www-form-urlencoded
+    ${resp}=    Post    httpbin    /post    data=${data}    headers=${headers}
+    ${j}    to json    ${resp.content}
+    log    ${j['origin']}
+    Dictionary Should Contain Value    ${resp.json()['form']}    度假村
 
 *** Keywords ***
 获取产品列表

@@ -1,32 +1,36 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, jsonify, render_template, request, Response, make_response
+from flask import Flask, jsonify, render_template, request, Response, make_response, url_for
 from demodao import Dao
 import time
 import atexit
 import json
+
+from mabot.model.io import IO
 
 def cleanup():
     db.removeOrder()
 
 atexit.register(cleanup)
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='')
 db = Dao()
+io = IO()
 
 @app.before_request
 def before_request():
     if request.path != '/':
         if not request.headers['content-type'].find('application/json'):
             return 'Unsupported Media Type', 415
- 
+
+@app.route('/mabot')
+def mabot():
+    suites = io.load_data("D:\\Python27\\Scripts\\output.xml").suites
+    return Response(json.dumps({'suite': suites}),  mimetype='text/html')
+
 @app.route('/')
 def index():
     return render_template('index.html')
-
-@app.route('/jquery/')
-def jquery():
-    return render_template('jquery.min.js')
 
 @app.route('/payfor/')
 def payfor():

@@ -1,0 +1,8 @@
+*** Settings ***
+Documentation     file://D:/Python27/Scripts/output.xml
+
+*** Test Cases ***
+手工测试案例
+    步骤1
+    步骤2
+    检查点

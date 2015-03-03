@@ -1,6 +1,7 @@
 *** Settings ***
 Library           Selenium2Library
 Library           DatabaseLibrary
+Library           String
 
 *** Variables ***
 ${db_path}        D:\\workspace.github\\demo-fenceng\\src_utf8\\demo.db
@@ -17,3 +18,9 @@ DbDemo
     ${queryResults}    query    select id, name, quantity from order_item order by id
     log    ${queryResults}
     [Teardown]    Close All Browsers
+
+OralceDemo
+    Comment    connect_to_database_using_custom_params    jaydebeapi    'oracle.jdbc.driver.OracleDriver', 'jdbc:oracle:thin:system/v8y4c9r6@//172.27.18.207:1521/orcl'
+    connect_to_database_using_custom_params    jaydebeapi    'oracle.jdbc.driver.OracleDriver','jdbc:oracle:thin:act/act@//172.30.11.33:1521/act'
+    ${queryResults} =    query    select * from help where topic='ACCEPT'
+    log    ${queryResults}
