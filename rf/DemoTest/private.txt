@@ -1,0 +1,38 @@
+*** Settings ***
+Library           OperatingSystem
+Library           Collections
+Library           Selenium2Library
+Library           RequestsLibrary
+
+*** Test Cases ***
+tzw
+    Comment    ${d}=    Create Dictionary    data    {"ProductName": "产品名称","Quantity": 55}
+    Comment    ${h}=    Create Dictionary    Content-Type    application/x-www-form-urlencoded; charset\=UTF-8
+    Create Session    httpserver    http://localhost:8000
+    ${resp}=    post    httpserver    /api/products    {"ProductName": "产品名称","Quantity": 55}
+    log    ${resp.content}
+    ${content}=    evaluate    '${resp.content}'.decode('unicode_escape')
+    log    ${content}
+    Comment    ${resp}=    get    httpserver    /login
+    Comment    log    ${resp.cookies}
+
+FlowidExampleTest
+    Create Session    ss    http://dmzstg1.pa18.com
+    ########    GetFlowid    ########
+    ${resp}=    get    ss    /pa18shopnst/do/apply/init?productCode=PAY118&
+    ${jsondata}=    To JSON    ${resp.content}
+    ${flowid}=    set variable    ${jsondata['flowId']}
+    ########    UsingFlowid    ########
+    ${resp}=    get    ss    /pa18shopnst/do/keep-flow-ctx.do?flowId=${flowid}
+    ${jsondata}=    To JSON    ${resp.content}
+    Should Be Equal As Strings    ${jsondata['resultCode']}    0
+
+pinan
+    open browser    https://cz.pingan.com.cn/ibd/#home/home/index?returnURL=infoIndex%2FinfoIndex%2Findex    ff
+    Wait Until Page Contains Element    id=userName    10
+    input text    id=userName    wqmx930
+    execute javascript    window.document.getElementById('pwdObject1-input-pan').style.display='block'
+    execute javascript    window.document.getElementById('pwdObject1-input').value="cmx770917"
+    click element    id=loginSubmit
+    wait for condition    return window.jQuery.active==0;    15
+    close all browsers
